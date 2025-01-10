@@ -1,0 +1,30 @@
+version: '3.1'
+
+services:
+  flask-web:
+    build:
+      context: .  # The context is the current directory
+    restart: always
+    ports:
+      - "5000:5000"
+    networks:
+      - mongo_network
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - "27017:27017"
+    networks:
+      - mongo_network
+
+
+networks:
+  mongo_network:
+
+
