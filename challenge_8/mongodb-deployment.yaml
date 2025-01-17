@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+  namespace: ktaktak
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:latest
+        ports:
+        - containerPort: 27017
+        resources:
+          requests:
+            cpu: "300m"       # 1/10 CPU
+            memory: "300Mi"   # 100 MB
+          limits:
+            cpu: "400m"       # 1/5 CPU
+            memory: "400Mi"   # 200 MB
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          value: "root"       # MongoDB root username
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          value: "example"    # MongoDB root password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+  namespace: ktaktak
+spec:
+  selector:
+    app: mongodb
+  ports:
+  - protocol: TCP
+    port: 27017        # Exposed port
+    targetPort: 27017  # MongoDB container port
+  type: ClusterIP

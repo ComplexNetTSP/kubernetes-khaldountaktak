@@ -1,13 +1,15 @@
-from flask import Flask, render_template_string, request
+import os
+from flask import Flask, render_template_string, request, jsonify
 from pymongo import MongoClient
 from datetime import datetime
 
 app = Flask(__name__)
 
-# MongoDB configuration
-mongo_client = MongoClient('mongodb://root:example@mongo:27017/') 
-db = mongo_client['flask_app_db']
-requests_collection = db['requests']
+# MongoDB configuration using environment variables
+mongo_url = os.getenv('MONGO_URL', 'mongodb://localhost:27017/')  # Default to localhost for local testing
+mongo_client = MongoClient(mongo_url)
+db = mongo_client[os.getenv('MONGO_DB_NAME', 'flask_app_db')]  # Default to 'flask_app_db'
+requests_collection = db[os.getenv('MONGO_COLLECTION_NAME', 'requests')]  # Default to 'requests'
 
 @app.route('/')
 def hello_world():
@@ -76,6 +78,15 @@ def hello_world():
         last_requests=last_10_requests,
         enumerate=enumerate  # Pass enumerate to the template context
     )
+
+@app.route('/health', methods=['GET'])
+def health():
+    try:
+        # Perform a lightweight MongoDB operation to ensure connectivity
+        mongo_client.admin.command('ping')
+        return jsonify({"status": "healthy"}), 200
+    except Exception as e:
+        return jsonify({"status": "unhealthy", "error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

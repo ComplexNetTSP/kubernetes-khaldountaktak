@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webdb
+  namespace: ktaktak
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: webdb
+  template:
+    metadata:
+      labels:
+        app: webdb
+    spec:
+      containers:
+      - name: webdb
+        image: khaldountaktak/flask-web:3
+        ports:
+        - containerPort: 5000
+        env:
+        - name: MONGO_URL
+          value: "mongodb://root:example@mongodb-service.ktaktak.svc.cluster.local:27017/" # MongoDB URL from environment
+        - name: MONGO_DB_NAME
+          value: "flask_app_db"  # MongoDB database name
+        - name: MONGO_COLLECTION_NAME
+          value: "requests"      # MongoDB collection name
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "100Mi"
+          limits:
+            cpu: "200m"
+            memory: "200Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webdb-service
+  namespace: ktaktak
+spec:
+  selector:
+    app: webdb
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 5000
+  type: ClusterIP

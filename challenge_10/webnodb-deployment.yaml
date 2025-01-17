@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webnodb
+  namespace: ktaktak
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: webnodb
+  template:
+    metadata:
+      labels:
+        app: webnodb
+    spec:
+      containers:
+      - name: webnodb
+        image: khaldountaktak/flask-nodb
+        ports:
+        - containerPort: 5000
+        resources:
+          requests:
+            cpu: "100m"       # 1/10 CPU
+            memory: "100Mi"   # 100 MB
+          limits:
+            cpu: "200m"       # 1/5 CPU
+            memory: "200Mi"   # 200 MB
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webnodb-service
+  namespace: ktaktak
+spec:
+  selector:
+    app: webnodb
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 5000
+  type: ClusterIP
