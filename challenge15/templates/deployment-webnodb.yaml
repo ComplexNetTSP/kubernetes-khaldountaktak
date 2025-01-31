@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webnodb
+  namespace: {{ .Values.global.namespace }}
+spec:
+  replicas: {{ .Values.webnodb.replicas }}
+  selector:
+    matchLabels:
+      app: webnodb
+  template:
+    metadata:
+      labels:
+        app: webnodb
+    spec:
+      containers:
+      - name: webnodb
+        image: khaldountaktak/flask-nodb
+        ports:
+        - containerPort: 5000
+        resources:
+          requests:
+            cpu: {{ .Values.webnodb.resources.requests.cpu }}
+            memory: {{ .Values.webnodb.resources.requests.memory }}
+          limits:
+            cpu: {{ .Values.webnodb.resources.limits.cpu }}
+            memory: {{ .Values.webnodb.resources.limits.memory }}

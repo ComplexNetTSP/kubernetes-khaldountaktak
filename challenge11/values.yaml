@@ -1,0 +1,53 @@
+global:
+  namespace: ktaktak
+  mongo:
+    host: mongodb-service
+    port: 27017
+    username: root
+    password: example
+
+mongodb:
+  resources:
+    requests:
+      cpu: "300m"
+      memory: "300Mi"
+    limits:
+      cpu: "400m"
+      memory: "400Mi"
+  replicas: 1
+
+webdb:
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "100Mi"
+    limits:
+      cpu: "200m"
+      memory: "200Mi"
+  replicas: 3
+
+webnodb:
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "100Mi"
+    limits:
+      cpu: "200m"
+      memory: "200Mi"
+  replicas: 2
+
+ingress:
+  class: nginx
+  rules:
+    - host: webnodb.ktaktak.net4255.luxbulb.org
+      service: webnodb-service
+      port: 80
+    - host: webdb.ktaktak.net4255.luxbulb.org
+      service: webdb-service
+      port: 80
+
+
+service:
+  type: ClusterIP # Or NodePort/LoadBalancer depending on your setup
+  port: 80
+

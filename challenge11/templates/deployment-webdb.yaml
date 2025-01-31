@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webdb
+  namespace: {{ .Values.global.namespace }}
+spec:
+  replicas: {{ .Values.webdb.replicas }}
+  selector:
+    matchLabels:
+      app: webdb
+  template:
+    metadata:
+      labels:
+        app: webdb
+    spec:
+      containers:
+      - name: webdb
+        image: khaldountaktak/flask-web:4
+        ports:
+        - containerPort: 5000
+        env:
+        - name: MONGO_URL
+          value: "mongodb://{{ .Values.global.mongo.username }}:{{ .Values.global.mongo.password }}@{{ .Values.global.mongo.host }}:{{ .Values.global.mongo.port }}/"
+        - name: MONGO_DB_NAME
+          value: "flask_app_db"
+        - name: MONGO_COLLECTION_NAME
+          value: "requests"
+        resources:
+          requests:
+            cpu: {{ .Values.webdb.resources.requests.cpu }}
+            memory: {{ .Values.webdb.resources.requests.memory }}
+          limits:
+            cpu: {{ .Values.webdb.resources.limits.cpu }}
+            memory: {{ .Values.webdb.resources.limits.memory }}

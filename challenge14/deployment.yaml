@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: autoscale-deployment
+  labels:
+    app: autoscale-example
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: autoscale-example
+  template:
+    metadata:
+      labels:
+        app: autoscale-example
+    spec:
+      containers:
+      - name: stress-container
+        image: polinux/stress 
+        resources:
+          requests:
+            cpu: "250m"
+          limits:
+            cpu: "500m"
+        command: ["stress"]
+        args:
+        - "--cpu"
+        - "1" 
+        - "--timeout"
+        - "300s"

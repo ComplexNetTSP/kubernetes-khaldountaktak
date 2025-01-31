@@ -16,7 +16,7 @@ def hello_world():
     # Variables for rendering
     my_name = "Khaldoun TAKTAK"
     project_name = "Project TEST"
-    version = "V2"
+    version = "V5 ROLLING UPDATE"
     hostname = "flask-web"
     current_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
